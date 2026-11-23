@@ -163,13 +163,33 @@ search.addEventListener('submit', event => {
   matches.at(-1)?.scrollIntoView({ block: 'center' });
 });
 
-document.querySelector('#pickup').addEventListener('click', () => {
+const prop = document.querySelector('.prop');
+const reachArt = document.querySelector('.reach-art');
+
+function openChat() {
+  setScene('chat');
+  scrollLatest();
+  messages.focus({ preventScroll: true });
+}
+
+function liftPhone() {
   setScene('lifting');
-  sceneTimer = setTimeout(() => {
-    setScene('chat');
-    scrollLatest();
-    messages.focus({ preventScroll: true });
-  }, reducedMotion.matches ? 0 : 1060);
+  sceneTimer = setTimeout(openChat, 1350);
+}
+
+reachArt.addEventListener('animationend', event => {
+  if (event.animationName === 'reach' && film.dataset.scene === 'reaching') liftPhone();
+});
+prop.addEventListener('animationend', event => {
+  if (event.target === prop && event.animationName === 'raise-phone' && film.dataset.scene === 'lifting') openChat();
+});
+document.querySelector('#pickup').addEventListener('click', () => {
+  if (reducedMotion.matches) {
+    openChat();
+    return;
+  }
+  setScene('reaching');
+  sceneTimer = setTimeout(liftPhone, 700);
 });
 
 document.querySelector('#listen').addEventListener('click', () => {

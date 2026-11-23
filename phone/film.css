@@ -25,35 +25,42 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid #e3bd73; out
 .title span { color: #544c49; font-size: 3.2cqw; letter-spacing: .12em; }
 h1 { font-family: "Songti SC", "Noto Serif CJK SC", Georgia, serif; margin: .35em 0; font-size: 7.2cqw; font-weight: 600; letter-spacing: .035em; }
 .prop {
+  --on-bench: translate(8%, 11%) rotate(-24deg) scale(.43, .37);
+  --reading: translate(0, 0) rotate(-3deg) scale(1);
   position: absolute; z-index: 1; width: 70%; left: 15%; top: 4.2%;
-  aspect-ratio: 71.9 / 150;
-  transform: translate(-5%, 8%) rotate(-19deg) scale(.42, .36);
-  transition: transform 980ms cubic-bezier(.3,.1,.2,1), opacity 500ms ease;
-  animation: spot-phone 1050ms ease-out both;
+  aspect-ratio: 71.9 / 150; transform: var(--on-bench);
 }
-@keyframes spot-phone {
-  from { transform: translate(-5%, 12%) rotate(-19deg) scale(.40,.34); }
-  to { transform: translate(-5%, 8%) rotate(-19deg) scale(.42,.36); }
+.phone {
+  position: absolute; inset: 0; z-index: 1;
+  background: #9c918c; border: .42cqw solid #554d4c; border-radius: 8.2cqw; padding: 1cqw;
+  box-shadow: .45cqw .65cqw 0 #61565588, inset 0 0 0 .35cqw #d2c7bc; overflow: hidden;
 }
-.phone { position: absolute; inset: 0; z-index: 1; background: #9c918c; border: .42cqw solid #554d4c; border-radius: 8.2cqw; padding: 1cqw; box-shadow: .45cqw .65cqw 0 #61565588, inset 0 0 0 .35cqw #d2c7bc; overflow: hidden; }
-.grip { position: absolute; top: 24%; left: -17.75%; width: 135.5%; height: 87%; opacity: 0; pointer-events: none; }
-.grip.palm { z-index: 0; }
-.grip.thumb { z-index: 2; }
-.film:is([data-scene="lifting"],[data-scene="chat"],[data-scene="heard"],[data-scene="turning"],[data-scene="ending"]) .prop { animation: none; transform: none; }
-.film[data-scene="chat"] .prop { transform: rotate(-4deg); }
-.film[data-scene="lifting"] .prop { animation: pickup 1050ms cubic-bezier(.25,.2,.22,1) both; }
-.film[data-scene="lifting"] .grip { animation: grip 1050ms ease-out both; }
-.film:is([data-scene="chat"],[data-scene="heard"],[data-scene="turning"]) .grip { opacity: 1; }
-@keyframes pickup {
-  0%, 29% { transform: translate(-5%, 8%) rotate(-19deg) scale(.42,.36); }
-  56% { transform: translate(1%, 7%) rotate(-12deg) scale(.65,.61); }
-  100% { transform: rotate(-4deg); }
+.reach-art, .held-art { position: absolute; pointer-events: none; opacity: 0; }
+.reach-art { z-index: 2; width: 52%; left: -2%; top: 51%; }
+.held-art { z-index: 2; display: block; max-width: none; left: -44.917%; top: -12.365%; width: 189.279%; height: 138.628%; }
+.film[data-scene="reaching"] .reach-art { animation: reach 620ms cubic-bezier(.16,.65,.35,1) both; }
+.film[data-scene="lifting"] .reach-art { animation: release-reach 160ms linear both; }
+@keyframes reach {
+  from { opacity: 0; transform: translate(-30%, 40%) rotate(-6deg); }
+  36% { opacity: 1; }
+  to { opacity: 1; transform: translate(0, 0) rotate(0); }
 }
-@keyframes grip {
-  0% { opacity: 0; transform: translate(-38%, 42%); }
-  15% { opacity: 1; }
-  29%, 100% { opacity: 1; transform: none; }
+@keyframes release-reach { from { opacity: 1; } to { opacity: 0; } }
+.film:is([data-scene="chat"],[data-scene="heard"],[data-scene="turning"]) .phone {
+  border-color: transparent; box-shadow: none; background: #d0cbd0;
 }
+.film[data-scene="lifting"] .prop { animation: raise-phone 1260ms cubic-bezier(.46,0,.22,1) both; }
+.film[data-scene="lifting"] .held-art { animation: reveal-grip 160ms linear both; }
+.film:is([data-scene="chat"], [data-scene="heard"], [data-scene="turning"]) .held-art { opacity: 1; }
+.film:is([data-scene="chat"], [data-scene="heard"], [data-scene="turning"], [data-scene="ending"]) .prop {
+  transform: var(--reading); transition: transform 820ms cubic-bezier(.23,.62,.25,1), opacity 500ms ease;
+}
+@keyframes raise-phone {
+  from { transform: var(--on-bench); }
+  to { transform: var(--reading); }
+}
+@keyframes reveal-grip { from { opacity: 0; } to { opacity: 1; } }
+.film:is([data-scene="lifting"],[data-scene="chat"],[data-scene="heard"]) .street { transform: translateY(3%) scale(1.12); }
 .film:not([data-scene="opening"]) .title { opacity: 0; pointer-events: none; }
 .film[data-scene="heard"] .prop { transform: translateY(7%) rotate(-6deg) scale(.91); }
 .film:is([data-scene="turning"],[data-scene="ending"]) .prop { opacity: 0; transform: translate(28%, 55%) rotate(-15deg) scale(.78); pointer-events: none; }
