@@ -203,49 +203,58 @@ pickup.addEventListener('click', () => {
 });
 
 let outsideTap = null;
-let previousScroll = 0;
-let lastFlip = -Infinity;
-const effects = new Map();
+let tapBuffer;
+let scrollStart = null;
+let wheelEnd = 0;
 
-function playEffect(kind) {
+function playTap(volume = 1) {
   if (audioContext?.state !== 'running') return;
-  let buffer = effects.get(kind);
-  if (!buffer) {
-    const flip = kind === 'flip';
-    buffer = audioContext.createBuffer(1, Math.ceil(audioContext.sampleRate * (flip ? .095 : .045)), audioContext.sampleRate);
-    const samples = buffer.getChannelData(0);
-    let softNoise = 0;
+  if (!tapBuffer) {
+    const rate = audioContext.sampleRate;
+    tapBuffer = audioContext.createBuffer(1, Math.ceil(rate * .016), rate);
+    const samples = tapBuffer.getChannelData(0);
+    let smoothed = 0;
     for (let index = 0; index < samples.length; index++) {
-      softNoise = softNoise * .64 + (Math.random() * 2 - 1) * .36;
-      const phase = index / samples.length;
-      const tone = Math.sin(2 * Math.PI * 330 * index / audioContext.sampleRate);
-      samples[index] = (flip ? softNoise * .14 : (tone * .13 + softNoise * .15)) * Math.sin(Math.PI * Math.sqrt(phase)) ** 2;
+      smoothed = .46 * smoothed + .54 * (Math.random() * 2 - 1);
+      const time = index / rate;
+      const envelope = Math.min(1, time / .0014) * Math.exp(-time / .0028);
+      samples[index] = smoothed * envelope * .16;
     }
-    effects.set(kind, buffer);
   }
   const sound = audioContext.createBufferSource();
-  sound.buffer = buffer;
-  sound.connect(audioContext.destination);
+  const gain = audioContext.createGain();
+  sound.buffer = tapBuffer;
+  gain.gain.value = volume;
+  sound.connect(gain).connect(audioContext.destination);
   sound.start();
 }
 
 film.addEventListener('click', event => {
-  if (event.target !== pickup && !event.target.closest('button')) return;
+  if (!event.target.closest('button')) return;
   if (audioContext?.state === 'suspended') {
-    audioContext.resume().then(() => playEffect('tap')).catch(() => {});
+    audioContext.resume().then(() => playTap()).catch(() => {});
   } else {
-    playEffect('tap');
+    playTap();
   }
 });
 
+messages.addEventListener('touchstart', () => {
+  scrollStart = messages.scrollTop;
+}, { passive: true });
+messages.addEventListener('touchend', () => { scrollStart = null; }, { passive: true });
+messages.addEventListener('touchcancel', () => { scrollStart = null; }, { passive: true });
 messages.addEventListener('scroll', () => {
-  const top = messages.scrollTop;
-  const now = performance.now();
-  if (film.dataset.scene === 'chat' && top < previousScroll - 1 && now - lastFlip >= 340) {
-    playEffect('flip');
-    lastFlip = now;
+  if (film.dataset.scene === 'chat' && scrollStart !== null && scrollStart - messages.scrollTop >= 24) {
+    playTap(.25);
+    scrollStart = null;
   }
-  previousScroll = top;
+}, { passive: true });
+messages.addEventListener('wheel', event => {
+  const now = performance.now();
+  if (film.dataset.scene === 'chat' && event.deltaY < 0 && messages.scrollTop > 0 && now > wheelEnd) {
+    playTap(.25);
+  }
+  wheelEnd = now + 200;
 }, { passive: true });
 
 continueStory.addEventListener('click', event => {

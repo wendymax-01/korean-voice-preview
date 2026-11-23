@@ -15,7 +15,7 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid #e3bd73; out
   position: absolute; inset: 0;
   background: linear-gradient(180deg, #24232930, transparent 36%, transparent 70%, #28252c36),
     url("media/night-bench.webp") center / cover, #5b554e;
-  transform: scale(1.05); animation: look-down 1000ms ease-out both;
+  transform: scale(1.05);
 }
 @keyframes look-down {
   from { transform: translateY(2%) scale(1.10); }
@@ -26,7 +26,7 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid #e3bd73; out
 h1 { font-family: "Songti SC", "Noto Serif CJK SC", Georgia, serif; margin: .35em 0; font-size: 7.2cqw; font-weight: 600; letter-spacing: .035em; }
 .outside-phone { position: absolute; inset: 0; z-index: 0; border: 0; background: transparent; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 .prop {
-  --on-bench: translate(8%, 11%) rotate(-24deg) scale(.43, .37);
+  --on-bench: translate(9%, 12%) rotate(57deg) scale(.205, .19);
   --reading: translate(0, 0) rotate(-3deg) scale(1);
   position: absolute; z-index: 1; width: 70%; left: 15%; top: 4.2%;
   aspect-ratio: 71.9 / 150; transform: var(--on-bench);
@@ -38,7 +38,7 @@ h1 { font-family: "Songti SC", "Noto Serif CJK SC", Georgia, serif; margin: .35e
 }
 .pickup-target { position: absolute; inset: 0; z-index: 3; border: 0; border-radius: 8.2cqw; background: transparent; -webkit-tap-highlight-color: transparent; }
 .reach-art, .held-art { position: absolute; pointer-events: none; opacity: 0; }
-.reach-art { filter: sepia(.13) brightness(.92); z-index: 2; width: 52%; left: -2%; top: 51%; }
+.reach-art { filter: sepia(.13) brightness(.92); z-index: 2; width: 39%; left: 12%; top: 53%; }
 .held-art { filter: sepia(.13) brightness(.92); z-index: 2; display: block; max-width: none; left: -44.917%; top: -12.365%; width: 189.279%; height: 138.628%; }
 .film[data-scene="reaching"] .reach-art { animation: reach 620ms cubic-bezier(.16,.65,.35,1) both; }
 .film[data-scene="lifting"] .reach-art { animation: release-reach 160ms linear both; }
