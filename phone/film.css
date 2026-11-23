@@ -36,13 +36,11 @@ h1 { font-family: "Songti SC", "Noto Serif CJK SC", Georgia, serif; margin: .35e
   to { transform: translate(-5%, 8%) rotate(-19deg) scale(.42,.36); }
 }
 .phone { position: absolute; inset: 0; background: #202229; border: .52cqw solid #88817d; border-radius: 8.2cqw; padding: 1cqw; box-shadow: 0 1.8cqw 3.4cqw #15151da3, inset 0 0 .4cqw #ada8a0; overflow: hidden; }
-.hand,.thumb { position: absolute; opacity: 0; pointer-events: none; overflow: visible; }
-.hand { width: 57%; left: 81%; top: 57%; }
-.thumb { width: 13%; right: -7.1%; top: 63%; z-index: 1; }
+.grip { position: absolute; z-index: 1; top: 65%; left: 94%; width: 38%; opacity: 0; pointer-events: none; }
 .film:is([data-scene="lifting"],[data-scene="chat"],[data-scene="heard"],[data-scene="turning"],[data-scene="ending"]) .prop { animation: none; transform: none; }
 .film[data-scene="lifting"] .prop { animation: pickup 1050ms cubic-bezier(.25,.2,.22,1) both; }
-.film[data-scene="lifting"] :is(.hand,.thumb) { animation: grip 1050ms ease-out both; }
-.film:is([data-scene="chat"],[data-scene="heard"],[data-scene="turning"]) :is(.hand,.thumb) { opacity: 1; }
+.film[data-scene="lifting"] .grip { animation: grip 1050ms ease-out both; }
+.film:is([data-scene="chat"],[data-scene="heard"],[data-scene="turning"]) .grip { opacity: 1; }
 @keyframes pickup {
   0%, 29% { transform: translate(-5%, 8%) rotate(-19deg) scale(.42,.36); }
   56% { transform: translate(1%, 7%) rotate(-12deg) scale(.65,.61); }
@@ -79,7 +77,7 @@ h1 { font-family: "Songti SC", "Noto Serif CJK SC", Georgia, serif; margin: .35e
 .avatar { display: grid; place-items: center; width: 8cqw; height: 8cqw; flex: none; border-radius: 34%; background: #566674; color: #eff1ed; font: 3.3cqw Georgia, serif; }
 .name { font-size: 2.95cqw; margin-bottom: .8cqw; }
 .content { min-width: 0; max-width: 73%; }
-.bubble { margin: 0; position: relative; background: #fff; color: #171a20; border-radius: 1.45cqw; padding: 1.8cqw 2.15cqw; line-height: 1.38; overflow-wrap: anywhere; }
+.bubble { margin: 0; position: relative; background: #fff; color: #171a20; border-radius: 1.45cqw; padding: 1.8cqw 2.15cqw; line-height: 1.38; word-break: keep-all; overflow-wrap: anywhere; }
 .bubble::before { content: ""; position: absolute; top: 1.3cqw; left: -1cqw; border-right: 1.3cqw solid #fff; border-bottom: 1.1cqw solid transparent; }
 .mine { flex-direction: row-reverse; }
 .mine .bubble { background: #ffe64c; }
@@ -92,7 +90,7 @@ h1 { font-family: "Songti SC", "Noto Serif CJK SC", Georgia, serif; margin: .35e
 .wave i { width: .5cqw; border-radius: 1cqw; background: #8797a3; height: var(--height); }
 .wave i.elapsed { background: #52667b; }
 .voice time { align-self: center; font-variant-numeric: tabular-nums; }
-.composer { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 2cqw; background: #f9f9f9; flex: none; min-height: 9.7cqw; padding: 1.4cqw 3cqw 1cqw; color: #53585e; }
+.composer { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 2cqw; background: #f9f9f9; flex: none; min-height: 9.7cqw; padding: 1.4cqw 3cqw 1cqw; color: #53585e; }
 .composer span:nth-child(2) { color: #555b63; background: #ededee; border-radius: 5cqw; padding: 1.3cqw 2.4cqw; font-size: 3cqw; }
 .home-line { position: relative; flex: none; height: 4cqw; background: #f9f9f9; }
 .home-line::after { content: ""; position: absolute; top: .8cqw; left: 34%; width: 32%; height: .9cqw; border-radius: 9cqw; background: #24252b; }
