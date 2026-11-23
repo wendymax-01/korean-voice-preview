@@ -1,29 +1,30 @@
 :root { color-scheme: dark; font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "PingFang SC", sans-serif; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-body { margin: 0; min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; overflow: hidden; background: #5b5554; }
+body { margin: 0; min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; overflow: hidden; background: #36332f; }
 button, input { font: inherit; }
 button { cursor: pointer; }
 button:focus-visible, [tabindex]:focus-visible { outline: 2px solid #e3bd73; outline-offset: -2px; }
 .film {
   position: relative; overflow: hidden; isolation: isolate; container-type: inline-size;
   width: min(100vw, 56.25vh); width: min(100vw, 56.25dvh);
-  aspect-ratio: 9 / 16; background: #bdb3af; color: #312c2d;
+  aspect-ratio: 9 / 16; background: #5b554e; color: #312c2d;
 }
-.street { position: absolute; inset: 0; overflow: hidden; background: #bdb3af; transition: transform 900ms ease, opacity 600ms ease; }
+.street { position: absolute; inset: 0; overflow: hidden; background: #5b554e; transition: transform 900ms ease, opacity 600ms ease; }
 .pavement {
   position: absolute; inset: 0;
-  background: linear-gradient(180deg, #f3ebe02a, transparent 36%, transparent 70%, #66565735),
-    url("media/bench.webp") center / cover, #bdb3af;
+  background: linear-gradient(180deg, #24232930, transparent 36%, transparent 70%, #28252c36),
+    url("media/night-bench.webp") center / cover, #5b554e;
   transform: scale(1.05); animation: look-down 1000ms ease-out both;
 }
 @keyframes look-down {
   from { transform: translateY(2%) scale(1.10); }
   to { transform: scale(1.05); }
 }
-.title { position: absolute; z-index: 2; top: 8%; left: 9%; transition: opacity 350ms; }
-.title span { color: #544c49; font-size: 3.2cqw; letter-spacing: .12em; }
+.title { position: absolute; z-index: 2; top: 8%; left: 9%; color: #f1e3cc; text-shadow: 0 1px 6px #1f1e21; transition: opacity 350ms; }
+.title span { color: #e2caa3; font-size: 3.2cqw; letter-spacing: .12em; }
 h1 { font-family: "Songti SC", "Noto Serif CJK SC", Georgia, serif; margin: .35em 0; font-size: 7.2cqw; font-weight: 600; letter-spacing: .035em; }
+.outside-phone { position: absolute; inset: 0; z-index: 0; border: 0; background: transparent; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 .prop {
   --on-bench: translate(8%, 11%) rotate(-24deg) scale(.43, .37);
   --reading: translate(0, 0) rotate(-3deg) scale(1);
@@ -37,8 +38,8 @@ h1 { font-family: "Songti SC", "Noto Serif CJK SC", Georgia, serif; margin: .35e
 }
 .pickup-target { position: absolute; inset: 0; z-index: 3; border: 0; border-radius: 8.2cqw; background: transparent; -webkit-tap-highlight-color: transparent; }
 .reach-art, .held-art { position: absolute; pointer-events: none; opacity: 0; }
-.reach-art { z-index: 2; width: 52%; left: -2%; top: 51%; }
-.held-art { z-index: 2; display: block; max-width: none; left: -44.917%; top: -12.365%; width: 189.279%; height: 138.628%; }
+.reach-art { filter: sepia(.13) brightness(.92); z-index: 2; width: 52%; left: -2%; top: 51%; }
+.held-art { filter: sepia(.13) brightness(.92); z-index: 2; display: block; max-width: none; left: -44.917%; top: -12.365%; width: 189.279%; height: 138.628%; }
 .film[data-scene="reaching"] .reach-art { animation: reach 620ms cubic-bezier(.16,.65,.35,1) both; }
 .film[data-scene="lifting"] .reach-art { animation: release-reach 160ms linear both; }
 @keyframes reach {
@@ -66,7 +67,7 @@ h1 { font-family: "Songti SC", "Noto Serif CJK SC", Georgia, serif; margin: .35e
 .film[data-scene="heard"] .prop { transform: translateY(7%) rotate(-6deg) scale(.91); }
 .film:is([data-scene="turning"],[data-scene="ending"]) .prop { opacity: 0; transform: translate(28%, 55%) rotate(-15deg) scale(.78); pointer-events: none; }
 .film:is([data-scene="turning"],[data-scene="ending"]) .street { transform: translate(-25%, 23%) scale(1.38); opacity: .3; }
-.lcd { height: 100%; display: flex; flex-direction: column; overflow: hidden; border-radius: 6.8cqw; background: linear-gradient(155deg, #c9c7cf, #d4ced1 68%, #c8c4cd); color: #393336; font-size: 3.5cqw; }
+.lcd { height: 100%; display: flex; flex-direction: column; overflow: hidden; border-radius: 6.8cqw; background: linear-gradient(155deg, #c9c7c7, #d5cec3 68%, #c7c3c0); color: #393336; font-size: 3.5cqw; }
 .status { position: relative; height: 9cqw; flex: none; display: flex; justify-content: space-between; align-items: center; padding: 1.6cqw 4.6cqw 0; font-size: 3.05cqw; font-weight: 700; }
 .island { position: absolute; left: 50%; top: 1.7cqw; transform: translateX(-50%); background: #191b1e; width: 16cqw; height: 4.6cqw; border-radius: 9cqw; }
 .signals { display: flex; align-items: center; gap: .7cqw; font-size: 2.55cqw; }

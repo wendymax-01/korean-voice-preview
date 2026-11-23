@@ -6,7 +6,6 @@ const search = document.querySelector('#search');
 const searchToggle = document.querySelector('#search-toggle');
 const announcement = document.querySelector('#announcement');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-const chatPause = 9000;
 let audioContext;
 let endingBuffer;
 let activeVoice = null;
@@ -72,7 +71,6 @@ function voiceMessage({ file, line }) {
     audio.currentTime = 0;
     if (activeVoice === voice) activeVoice = null;
     update();
-    scheduleEnding();
   });
   button.addEventListener('click', () => {
     if (film.dataset.scene !== 'chat') return;
@@ -113,6 +111,7 @@ for (const entry of conversation) {
 }
 
 const pickup = document.querySelector('#pickup');
+const continueStory = document.querySelector('#continue-story');
 const endingCopy = document.querySelector('.ending-copy');
 const ending = document.querySelector('.ending');
 const turn = document.querySelector('#turn');
@@ -122,6 +121,7 @@ function setScene(scene) {
   clearTimeout(sceneTimer);
   film.dataset.scene = scene;
   pickup.hidden = scene !== 'opening';
+  continueStory.hidden = scene !== 'chat';
   endingCopy.hidden = !['heard', 'turning', 'ending'].includes(scene);
   ending.hidden = !['turning', 'ending'].includes(scene);
   turn.hidden = scene !== 'heard';
@@ -171,7 +171,6 @@ function openChat() {
   setScene('chat');
   scrollLatest();
   messages.focus({ preventScroll: true });
-  scheduleEnding();
 }
 
 function liftPhone() {
@@ -203,25 +202,63 @@ pickup.addEventListener('click', () => {
   sceneTimer = setTimeout(liftPhone, 700);
 });
 
-function scheduleEnding() {
-  if (film.dataset.scene !== 'chat') return;
-  clearTimeout(sceneTimer);
-  if (document.hidden) return;
-  sceneTimer = setTimeout(() => {
-    if ((activeVoice && !activeVoice.audio.paused) || !search.hidden) {
-      scheduleEnding();
-      return;
+let outsideTap = null;
+let previousScroll = 0;
+let lastFlip = -Infinity;
+const effects = new Map();
+
+function playEffect(kind) {
+  if (audioContext?.state !== 'running') return;
+  let buffer = effects.get(kind);
+  if (!buffer) {
+    const flip = kind === 'flip';
+    buffer = audioContext.createBuffer(1, Math.ceil(audioContext.sampleRate * (flip ? .095 : .045)), audioContext.sampleRate);
+    const samples = buffer.getChannelData(0);
+    let softNoise = 0;
+    for (let index = 0; index < samples.length; index++) {
+      softNoise = softNoise * .64 + (Math.random() * 2 - 1) * .36;
+      const phase = index / samples.length;
+      const tone = Math.sin(2 * Math.PI * 330 * index / audioContext.sampleRate);
+      samples[index] = (flip ? softNoise * .14 : (tone * .13 + softNoise * .15)) * Math.sin(Math.PI * Math.sqrt(phase)) ** 2;
     }
-    hearVoice();
-  }, chatPause);
+    effects.set(kind, buffer);
+  }
+  const sound = audioContext.createBufferSource();
+  sound.buffer = buffer;
+  sound.connect(audioContext.destination);
+  sound.start();
 }
 
-for (const event of ['scroll', 'pointerdown', 'pointerup', 'keydown', 'focusin']) {
-  prop.addEventListener(event, scheduleEnding, { capture: true, passive: true });
-}
-document.addEventListener('visibilitychange', scheduleEnding);
+film.addEventListener('click', event => {
+  if (event.target !== pickup && !event.target.closest('button')) return;
+  if (audioContext?.state === 'suspended') {
+    audioContext.resume().then(() => playEffect('tap')).catch(() => {});
+  } else {
+    playEffect('tap');
+  }
+});
+
+messages.addEventListener('scroll', () => {
+  const top = messages.scrollTop;
+  const now = performance.now();
+  if (film.dataset.scene === 'chat' && top < previousScroll - 1 && now - lastFlip >= 340) {
+    playEffect('flip');
+    lastFlip = now;
+  }
+  previousScroll = top;
+}, { passive: true });
+
+continueStory.addEventListener('click', event => {
+  if (film.dataset.scene !== 'chat') return;
+  const now = performance.now();
+  const doubleTap = outsideTap !== null && now - outsideTap <= 450;
+  outsideTap = doubleTap ? null : now;
+  if (doubleTap || event.detail === 0) hearVoice();
+});
+prop.addEventListener('pointerdown', () => { outsideTap = null; });
 
 async function hearVoice() {
+  activeVoice?.audio.pause();
   closeSearch();
   setScene('heard');
   turn.focus({ preventScroll: true });
@@ -243,6 +280,7 @@ turn.addEventListener('click', () => {
 
 restart.addEventListener('click', () => {
   activeVoice = null;
+  outsideTap = null;
   setScene('opening');
   scrollLatest();
   pickup.focus({ preventScroll: true });
