@@ -126,3 +126,8 @@ h1 { font-family: "Songti SC", "Noto Serif CJK SC", Georgia, serif; margin: .35e
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
 }
+
+.reach-art { mask-image: linear-gradient(to bottom, black 80%, transparent 100%); }
+.messages { scrollbar-width: none; }
+.messages::-webkit-scrollbar { display: none; }
+.chat-copy { bottom: 2.5%; }
