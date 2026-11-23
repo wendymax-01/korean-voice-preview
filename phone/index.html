@@ -3,18 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#152e2a">
+  <meta name="theme-color" content="#141921">
   <meta name="description" content="一部落在公交站的手机，一段虚构的首尔日常。">
   <title>捡到郑成灿手机</title>
-  <link rel="stylesheet" href="phone.css?v=2">
-  <script defer src="story.js?v=2"></script>
-  <script defer src="phone.js?v=2"></script>
+  <link rel="stylesheet" href="phone.css?v=3">
+  <script defer src="story.js?v=3"></script>
+  <script defer src="phone.js?v=3"></script>
 </head>
 <body>
   <main class="device" id="device" aria-label="捡到郑成灿手机">
     <div class="status" aria-label="手机状态">
       <span id="status-time">21:47</span><span class="sensor" aria-hidden="true"></span>
-      <span class="signals" aria-label="5G，电量 78%"><span aria-hidden="true">▂▄▆█</span> 5G <span class="battery">78</span></span>
+      <span class="signals" role="img" aria-label="蜂窝信号 3 格，5G，电量 78%">
+        <span class="cell-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span class="network" aria-hidden="true">5G</span>
+        <span class="battery" aria-hidden="true"><span>78</span></span>
+      </span>
     </div>
     <div id="screen" class="screen"></div>
     <button id="home-button" class="home-button" aria-label="返回桌面"><span></span></button>

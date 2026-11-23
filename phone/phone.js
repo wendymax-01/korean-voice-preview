@@ -129,7 +129,7 @@ function pinView() {
 
 function homeView() {
   const widget = desktopPage === 0
-    ? button('<span><small>서울 · 연남동</small><strong>延南洞</strong><span>小雨 · 7°</span></span><span class="rain" aria-hidden="true">☂</span>', 'open', 'weather', 'home-widget')
+    ? button('<span><small>서울 · 연남동</small><strong>延南洞</strong><span>小雨 · 7°</span></span><span class="rain" aria-hidden="true"><svg viewBox="0 0 56 56" fill="none"><path d="M14 35a9 9 0 1 1 3-17 12 12 0 0 1 23 3c9 1 10 14 0 14H14Z" fill="currentColor"/><path d="m20 41-3 6m12-6-3 6m12-6-3 6" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></span>', 'open', 'weather', 'home-widget')
     : button('<span><small>11月24日 · 星期二</small><strong>今晚 21:30</strong><span>回家吃晚饭</span></span><span class="widget-calendar" aria-hidden="true">24</span>', 'open', 'calendar', 'home-widget');
   return `<div class="home-layout">
     ${widget}
