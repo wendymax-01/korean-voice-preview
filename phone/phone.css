@@ -266,3 +266,74 @@ button.home-widget { width: 100%; color: inherit; text-align: left; }
   .home-layout .app-grid { padding: 13px 0 7px; gap: 11px 4px; }
   .page-dots button { min-height: 29px; }
 }
+
+.app-title { padding: 16px 17px 10px; }
+.app-title h2 { font-size: 29px; line-height: 1.15; letter-spacing: -.035em; }
+.app-title p { color: var(--muted); margin-top: 5px; font-size: 12px; }
+.search-icon { width: 12px; height: 12px; border: 1.7px solid currentColor; border-radius: 50%; position: relative; color: var(--muted); margin-right: 3px; }
+.search-icon::after { content: ""; position: absolute; width: 5px; height: 1.7px; background: currentColor; left: 8px; top: 9px; transform: rotate(45deg); }
+.search span { flex: none; }
+.search { background: #e9ecf4; }
+.native-list { margin: 7px 14px 15px; padding: 0 10px; background: #fff; border: 1px solid #e6e9f2; border-radius: 18px; }
+.native-list > :last-child { border-bottom: 0; }
+.native-section { margin: 12px 0 20px; }
+.native-section h3 { margin: 0 17px; font-size: 15px; }
+.section-heading { display: flex; justify-content: space-between; align-items: center; padding-right: 14px; }
+.pill { border-radius: 20px; padding: 5px 11px; background: #e8effb; color: #29486e; font-size: 12px; min-height: 34px; }
+.speed-dial { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin: 9px 14px; }
+.speed-dial button { display: grid; justify-items: center; gap: 5px; border-radius: 16px; padding: 9px 5px; background: white; font-size: 12px; }
+.missed { color: #ad343e; }
+.device[data-page="calls"] .dialer .digit { border-radius: 50%; background: #e9edf7; }
+.device[data-page="calls"] .dialer .primary { background: #137747; }
+.album-covers { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 13px; padding: 5px 15px 16px; }
+.album-card { padding: 0; min-width: 0; text-align: left; display: grid; gap: 4px; }
+.album-card small { color: var(--muted); }
+.album-cover { border-radius: 15px; aspect-ratio: 1; overflow: hidden; display: grid; place-items: center; background: #e9edf7; color: #714967; }
+.album-cover img { width: 100%; height: 100%; object-fit: cover; }
+.device[data-page="photos"] .tabs { border-bottom: 0; border-top: 1px solid var(--line); }
+.device[data-page="photos"] .gallery { gap: 2px; padding: 2px; }
+.folder-mark { width: 21px; height: 15px; border: 2px solid #a26a08; border-radius: 4px; margin: 2px 4px 0 2px; }
+.device[data-page="notes"] .header-end button, .device[data-page="note"] .header-end button { color: #855b09; }
+.device[data-page="calendar"] { --green: #af3248; }
+.device[data-page="calendar"] .month small { color: var(--muted); }
+.device[data-page="talk"], .device[data-page="friend"] { background: #fffdf6; }
+.device[data-page="talk"] .tabs .selected { background: #f8e795; color: #3b321a; }
+.device[data-page="chat"] .chat-log { background: #e6ecf6; }
+.device[data-page="chat"] .out .bubble { background: #f8e183; }
+.device[data-page="chat"] .bubble { font-size: 14px; }
+.device[data-page="chat"] .day { background: #d7e0ef; }
+.map-saved { margin: -7px 13px 12px; position: relative; background: #fff; border-radius: 19px; border: 1px solid #e4e8f1; padding-bottom: 5px; }
+.device[data-page="map"] .map-sketch { height: 235px; border-radius: 16px 16px 0 0; }
+.order-stack { display: grid; gap: 10px; margin: 3px 14px 14px; }
+.order-ticket { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px; padding: 14px; font-size: 13px; border: 1px solid #e1e6f0; background: #fff; border-radius: 16px; text-align: left; }
+.order-ticket strong, .order-ticket > span:nth-of-type(2) { grid-column: 1 / -1; }
+.order-ticket strong { font-size: 16px; }
+.order-ticket > small { text-align: right; color: var(--muted); }
+.order-state { color: #13625b; font-weight: 700; }
+.order-link { color: #305789; justify-self: end; }
+.social-feed { display: grid; gap: 12px; padding: 1px 13px 14px; }
+.social-post { background: white; border: 1px solid #e3e7ef; border-radius: 16px; overflow: hidden; }
+.social-post button { display: block; text-align: left; padding: 0; width: 100%; }
+.social-byline { display: grid; gap: 3px; padding: 11px 12px; }
+.social-byline small { font-size: 11px; color: var(--muted); }
+.social-post img { width: 100%; height: clamp(145px, 30dvh, 280px); object-fit: cover; display: block; }
+.social-caption { display: block; padding: 10px 12px; font-size: 13px; }
+.record-mark { min-width: 38px; height: 38px; padding: 3px; display: grid; place-items: center; border-radius: 11px; font-size: 10px; font-weight: 700; background: var(--record-bg, #e3edff); color: var(--record-ink, #274981); }
+.device[data-page="youtube"] { --record-bg: #ffe8ed; --record-ink: #a52c44; }
+.device[data-page="naver"], .device[data-page="melon"] { --record-bg: #e3f6e6; --record-ink: #1a6740; }
+.device[data-page="taxi"] { --record-bg: #fef1b7; --record-ink: #664c09; }
+.device[data-page="karrot"] { --record-bg: #fff0df; --record-ink: #a14824; }
+.forecast-hero { margin: 5px 14px 11px; padding: 19px; border-radius: 18px; background: linear-gradient(150deg,#31466b,#536d9c); color: white; text-align: center; }
+.forecast-hero strong { display: block; font-size: 53px; font-weight: 330; }
+.forecast-hero p { font-size: 13px; }
+.control-row { display: flex; align-items: center; justify-content: space-between; gap: 5px; min-height: 62px; border-bottom: 1px solid var(--line); }
+.control-text { text-align: left; display: grid; padding: 7px 4px; flex: 1; }
+.control-text small { margin-top: 3px; font-size: 11px; color: var(--muted); }
+.alarm-row .control-text strong { font-size: 29px; font-weight: 450; }
+.switch-control, .check-control { flex: none; width: 44px; height: 44px; position: relative; display: grid; place-items: center; }
+.switch-control::before { content: ""; width: 34px; height: 20px; border-radius: 20px; background: #78849a; }
+.switch-control[aria-checked="true"]::before { background: #227849; }
+.switch-control::after { content: ""; position: absolute; left: 8px; width: 14px; height: 14px; background: #fff; border-radius: 50%; }
+.switch-control[aria-checked="true"]::after { left: 22px; }
+.check-control::before { content: ""; border: 2px solid #7183ab; width: 17px; height: 17px; border-radius: 50%; }
+.check-control[aria-checked="true"]::before { background: #4566a2; border-color: #4566a2; box-shadow: inset 0 0 0 2px white; }

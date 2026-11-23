@@ -62,6 +62,11 @@ const avatar = id => {
 const photo = (id, extra = '') => `<img src="media/photo-${id}.webp" alt="${photos[id-1][1]}" ${extra}>`;
 const tabs = (items, active, action) => `<nav class="tabs">${items.map(([id, label]) =>
   button(label, action, id, id === active ? 'selected' : '')).join('')}</nav>`;
+const searchBox = (label, placeholder = label) =>
+  `<label class="search"><span class="search-icon" aria-hidden="true"></span><input id="search" type="search" aria-label="${label}" placeholder="${placeholder}"></label>`;
+const emptySearch = '<p class="empty" id="search-empty" hidden>没有匹配结果。</p>';
+const appTitle = (title, summary = '') =>
+  `<section class="app-title"><h2>${title}</h2>${summary ? `<p>${summary}</p>` : ''}</section>`;
 const iconImage = id => `<img src="icons/${id}.webp" alt="" draggable="false">`;
 function appIcon(id) {
   if (id === 'folder') return `<span class="icon mini-icons" aria-hidden="true">${folders.map(iconImage).join('')}</span>`;
@@ -162,8 +167,8 @@ function talkView() {
     const matches = Object.keys(people).filter(id => people[id].group === group);
     return `<section class="friend-group"><h2>${group} <small>${matches.length}</small></h2>${matches.map(makeRow).join('')}</section>`;
   }).join('') : ids.map(makeRow).join('');
-  return `${header('KakaoTalk', friends ? `친구 · ${Object.keys(people).length - 1} 位好友及群聊` : '채팅 · 聊天')}
-    ${view(`<label class="search"><span aria-hidden="true">⌕</span><input type="search" id="search" placeholder="搜索${friends ? '好友' : '聊天'}" aria-label="搜索${friends ? '好友' : '聊天'}"></label>
+  return `${header('KakaoTalk')}
+    ${view(`${appTitle(friends ? '好友' : '聊天')}${searchBox(friends ? '搜索好友' : '搜索聊天')}
     <div class="rows">${rows}<p class="empty" id="search-empty" hidden>没有匹配结果。</p></div>`)}
     ${tabs([['friends','好友'],['chats','聊天']], tab, 'talk-tab')}`;
 }
@@ -199,11 +204,23 @@ function photoIds(album) {
 }
 
 function galleryView() {
+  const tab = route.tab || 'library';
   const album = route.album || 'all';
   const ids = photoIds(album);
-  return `${header('相册', `${ids.length} 张照片`)}
-    ${tabs(Object.entries(albums).map(([id, [label]]) => [id, label]), album, 'album')}
-    ${view(ids.length ? `<div class="gallery">${ids.map(id => button(photo(id, 'loading="lazy"'), 'photo', id, 'photo-tile')).join('')}</div>` : '<p class="empty">查看照片时轻点爱心，即可加入收藏。</p>')}`;
+  const gallery = photoList => `<div class="gallery">${photoList.map(id =>
+    `<button class="photo-tile" data-act="photo" data-value="${id}" data-search="${escape(photos[id-1].join(' '))}">${photo(id, 'loading="lazy"')}</button>`).join('')}</div>`;
+  let content;
+  if (tab === 'collections' && !route.album) {
+    content = appTitle('精选相集') + `<div class="album-covers">${Object.entries(albums).filter(([id]) => id !== 'all').map(([id,[label]]) => {
+      const list = photoIds(id);
+      return button(`<span class="album-cover">${list.length ? photo(list[0]) : '<span>♡</span>'}</span><strong>${label}</strong><small>${list.length} 张</small>`, 'album', id, 'album-card');
+    }).join('')}</div>`;
+  } else {
+    content = (tab === 'search' ? searchBox('搜索照片', '试试「伦敦」或「球场」') : appTitle(albums[album][0], `${ids.length} 张照片`))
+      + (ids.length ? gallery(ids) : '<p class="empty">查看照片时轻点爱心，即可加入收藏。</p>')
+      + (tab === 'search' ? emptySearch : '');
+  }
+  return header('相册') + view(content) + tabs([['library','图库'],['collections','相集'],['search','搜索']], tab, 'photo-tab');
 }
 
 function photoView() {
@@ -219,8 +236,14 @@ function photoView() {
 }
 
 function notesView() {
-  return `${header('备忘录', '最近编辑')}${view(`<div class="rows">${notes.map(([title,date,body], i) =>
-    button(`<span class="row-main"><strong>${title}</strong><small>${date} · ${escape((noteEdits[i] ?? body).split('\n')[0])}</small></span><span class="chevron">›</span>`, 'note', i, 'row')).join('')}</div>`)}`;
+  if (route.folders) return header('备忘录') + view(appTitle('文件夹') +
+    `<div class="native-list">${button(`<span class="folder-mark" aria-hidden="true"></span><span class="row-main"><strong>备忘录</strong></span><small>${notes.length}</small><span class="chevron">›</span>`, 'notes-list', '', 'row')}</div>`);
+  const rows = notes.map(([title,date,body], i) => {
+    const text = noteEdits[i] ?? body;
+    return `<button class="row" data-act="note" data-value="${i}" data-search="${escape(title + ' ' + text)}"><span class="row-main"><strong>${title}</strong><small>${date} · ${escape(text.split('\n')[0])}</small></span></button>`;
+  }).join('');
+  return header('备忘录', '', button('文件夹', 'note-folders')) +
+    view(appTitle('备忘录', `${notes.length} 条`) + searchBox('搜索备忘录') + `<div class="native-list">${rows}</div>` + emptySearch);
 }
 
 function noteView() {
@@ -234,13 +257,26 @@ function noteView() {
 
 function callsView() {
   const tab = route.tab || 'recent';
-  const content = tab === 'dial' ?
-    `<div class="dialer"><output id="dial-value" aria-label="拨号号码">${escape(dial || '—')}</output><div class="keypad">${'123456789*0#'.split('').map(n => button(n, 'dial-digit', n, 'digit')).join('')}</div>
+  const missed = route.filter === 'missed';
+  let content;
+  if (tab === 'dial') {
+    const letters = ['','', 'ABC', 'DEF', 'GHI', 'JKL', 'MNO', 'PQRS', 'TUV', 'WXYZ'];
+    content = `<div class="dialer"><output id="dial-value" aria-label="拨号号码">${escape(dial || '—')}</output><div class="keypad">${'123456789*0#'.split('').map(n =>
+      button(`<span>${n}</span>${letters[n] ? `<small>${letters[n]}</small>` : ''}`, 'dial-digit', n, 'digit')).join('')}</div>
     <div class="dial-actions">${button('模拟拨号', 'dial-call', '', 'primary')}${button('⌫<span class="sr">删除号码</span>', 'dial-digit', 'delete')}</div>
-    <div class="empty" id="dial-error" role="status"></div></div>` :
-    `<div class="rows">${(tab === 'contacts' ? phoneContacts.map(id => [id,'',people[id].bio]) : calls.map(([id,time,kind]) => [id,time,kind])).map(([id,time,kind]) =>
-      button(`${avatar(id)}<span class="row-main"><strong>${people[id].name}</strong><small class="${kind.startsWith('未接') ? 'missed' : ''}">${kind}</small></span><small>${time}</small><span class="chevron">›</span>`, 'call', id, 'row')).join('')}</div>`;
-  return `${header('电话')}${view(content)}${tabs([['recent','最近通话'],['contacts','通讯录'],['dial','拨号']], tab, 'call-tab')}`;
+    <div class="empty" id="dial-error" role="status"></div></div>`;
+  } else if (tab === 'contacts') {
+    content = appTitle('通讯录') + searchBox('搜索联系人') + `<div class="native-list">${phoneContacts.map(id =>
+      `<button class="row" data-act="call" data-value="${id}" data-search="${escape(people[id].name + ' ' + people[id].bio)}">${avatar(id)}<span class="row-main"><strong>${people[id].name}</strong></span><span class="chevron">›</span></button>`).join('')}</div>` + emptySearch;
+  } else {
+    const rows = calls.filter(([, ,kind]) => !missed || kind.startsWith('未接'));
+    content = appTitle('通话') + `<section class="native-section"><h3>个人收藏</h3><div class="speed-dial">${['wendy','mom','jiho'].map(id =>
+      button(`${avatar(id)}<span>${people[id].name}</span>`, 'call', id)).join('')}</div></section>
+      <section class="native-section"><div class="section-heading"><h3>最近通话</h3>${button(missed ? '显示全部' : '仅未接', 'call-filter', '', 'pill')}</div>
+      <div class="native-list">${rows.map(([id,time,kind]) => button(`${avatar(id)}<span class="row-main"><strong class="${kind.startsWith('未接') ? 'missed' : ''}">${people[id].name}</strong><small>${kind}</small></span><small>${time}</small><span class="chevron">›</span>`, 'call', id, 'row')).join('')}</div></section>
+      <section class="native-section"><h3>语音信箱</h3><div class="native-list">${button(`${avatar('wendy')}<span class="row-main"><strong>Wendy</strong><small>21:40 · 查看留言</small></span><span class="chevron">›</span>`, 'start-call', 'wendy', 'row')}</div></section>`;
+  }
+  return header('电话') + view(content) + tabs([['recent','通话'],['contacts','联系人'],['dial','拨号键盘']], tab, 'call-tab');
 }
 
 function callView() {
@@ -258,8 +294,8 @@ function callView() {
 
 function calendarView() {
   const day = route.day || 24;
-  return `${header('日历', '2026年11月')}
-  ${view(`<section class="calendar"><div class="month"><strong>11月</strong>${button('故事当天', 'day', 24)}</div>
+  return `${header('日历', '', button('今天', 'day', 24, 'pill'))}
+  ${view(`<section class="calendar"><div class="month"><strong>11月</strong><small>2026年</small></div>
     <div class="calendar-grid">${'一二三四五六日'.split('').map(d => `<span class="week">${d}</span>`).join('')}
       ${'<span></span>'.repeat(6)}${Array.from({ length:30 }, (_, i) => i+1).map(d =>
         `<button data-act="day" data-value="${d}" aria-label="11月${d}日${events[d] ? '，有日程' : ''}" aria-pressed="${d === day}">${d}${events[d] ? '<i></i>' : ''}</button>`).join('')}</div>
@@ -274,11 +310,11 @@ function eventView() {
 }
 
 function mapView() {
-  return `${header('NAVER Map', '저장 · 已保存地点')}${view(`<label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" aria-label="搜索地点" placeholder="搜索已保存地点"></label>
+  return `${header('NAVER Map', '저장 · 已保存地点')}${view(`${searchBox('搜索地点', '搜索地点或地址')}
     <div class="map-sketch" aria-label="延南洞故事地图"><span class="map-park">京义线林路</span><span class="map-line"></span>
       ${places.slice(0,3).map(([name], i) => button(`<span>${name}</span>`, 'place', i, 'map-point point-' + i)).join('')}</div>
-    <div class="rows">${places.map(([name,ko,detail], i) =>
-      `<button class="row" data-act="place" data-value="${i}" data-search="${escape(name + ' ' + ko)}"><span class="marker">⌖</span><span class="row-main"><strong>${name}</strong><small>${ko} · ${detail}</small></span><span class="chevron">›</span></button>`).join('')}<p class="empty" id="search-empty" hidden>没有匹配的地点。</p></div>`)}`;
+    <div class="map-saved">${appTitle('已保存地点', '延南洞与望远洞')}<div class="rows">${places.map(([name,ko,detail], i) =>
+      `<button class="row" data-act="place" data-value="${i}" data-search="${escape(name + ' ' + ko)}"><span class="marker">⌖</span><span class="row-main"><strong>${name}</strong><small>${ko} · ${detail}</small></span><span class="chevron">›</span></button>`).join('')}<p class="empty" id="search-empty" hidden>没有匹配的地点。</p></div></div>`)}`;
 }
 
 function placeView() {
@@ -290,8 +326,18 @@ function placeView() {
 
 function ordersView() {
   const id = route.name;
-  return `${header(apps[id], id === 'baemin' ? '배민 · 外卖订单' : '쿠팡 · 购物订单')}
-    ${view(`<div class="rows">${orders[id].map(([title,status,price], i) => button(`<span class="row-main"><strong>${title}</strong><small>${status}</small></span><span>${price}</span><span class="chevron">›</span>`, 'order', i, 'row')).join('')}</div>`)}`;
+  const delivery = id === 'baemin';
+  const filter = route.tab || 'all';
+  const list = orders[id].map(([title,status,price,items], i) => {
+    const complete = status.includes('已送达');
+    if (filter === 'active' && !complete || filter === 'all') {
+      return button(`<span class="order-state">${status.split(' · ').at(-1)}</span><small>${status.split(' · ')[0]}</small><strong>${title}</strong><span>${items}</span><b>${price}</b><span class="order-link">查看订单 ›</span>`, 'order', i, 'order-ticket');
+    }
+    return '';
+  }).join('');
+  return header(apps[id]) + view(appTitle(delivery ? '外卖订单' : '我的订单') +
+    `<div class="order-stack">${list || '<p class="empty">当前没有配送中的订单。</p>'}</div>`) +
+    tabs([['all','全部订单'],['active','配送中']], filter, 'order-filter');
 }
 
 function orderView() {
@@ -315,15 +361,23 @@ function everydayView() {
   const app = route.name;
   const { title, tabs:labels, records } = everyday[app];
   const tab = route.tab || 0;
-  const rows = records.map(([name,meta,,imageId,secondary], i) => {
+  const rows = records.map(([name,meta,detail,imageId,secondary], i) => {
     const belongs = app === 'reminders' ? flagFor(app,i) : secondary;
     if (tab === 1 ? !belongs : (['weather','clock','reminders','youtube','naver','taxi','karrot'].includes(app) && belongs)) return '';
-    const checked = app === 'clock' && i < 2 ? ' · ' + (flagFor(app,i) ? '已停用' : '已开启') :
-      app === 'reminders' && belongs ? ' · 已完成' : '';
-    return button(`${app === 'instagram' && imageId ? `<span class="row-thumb">${photo(imageId)}</span>` : ''}<span class="row-main"><strong>${name}</strong><small>${meta}${checked}</small></span><span class="chevron">›</span>`, 'record', i, 'row');
+    if (app === 'instagram') return `<article class="social-post">${button(`<span class="social-byline"><strong>${name}</strong><small>${meta}</small></span>${imageId ? photo(imageId, 'loading="lazy"') : ''}<span class="social-caption">${detail}</span>`, 'record', i)}</article>`;
+    if (app === 'clock' && i < 2 || app === 'reminders') {
+      const clock = app === 'clock';
+      const checked = clock ? !flagFor(app,i) : Boolean(belongs);
+      return `<article class="control-row ${clock ? 'alarm-row' : ''}">${button(`<strong>${name}</strong><small>${meta}</small>`, 'record', i, 'control-text')}
+       <button class="${clock ? 'switch-control' : 'check-control'}" type="button" role="${clock ? 'switch' : 'checkbox'}" aria-checked="${checked}" aria-label="${escape(name)}" data-act="list-toggle" data-value="${i}"></button></article>`;
+    }
+    const tag = { youtube:'观看记录', naver:'搜索', toss:'₩', melon:'♫', taxi:'行程', karrot:'交易' }[app];
+    return button(`${tag ? `<span class="record-mark" aria-hidden="true">${tag}</span>` : ''}<span class="row-main"><strong>${name}</strong><small>${meta}</small></span><span class="chevron">›</span>`, 'record', i, 'row');
   }).join('');
-  return `${header(apps[app], title)}${view(`<div class="rows">${rows || '<p class="empty">这里暂时没有记录。</p>'}</div>`)}
-    ${tabs(labels.map((label,i) => [i,label]), tab, 'everyday-tab')}`;
+  const weather = app === 'weather' && tab === 0 ? '<div class="forecast-hero"><p>서울 · 연남동</p><strong>7°</strong><p>小雨 · 体感 5°</p></div>' : '';
+  return header(apps[app]) + view(appTitle(title) + weather +
+    `<div class="${app === 'instagram' ? 'social-feed' : 'native-list'}">${rows || '<p class="empty">这里暂时没有记录。</p>'}</div>`) +
+    tabs(labels.map((label,i) => [i,label]), tab, 'everyday-tab');
 }
 function recordView() {
   const { app, id } = route;
@@ -383,18 +437,21 @@ function sendMessage(text) {
   render();
 }
 
+function toggleRecord(app, id) {
+  (recordFlags[app] ??= {})[id] = !flagFor(app,id);
+  save('records', recordFlags);
+  render();
+}
+
 const actions = {
   open: value => navigate(value),
   'desktop-page': page => { desktopPage = Number(page); render(); },
   'everyday-tab': tab => navigate(route.name, { tab:Number(tab) }, true),
   'everyday-link': app => navigate(app),
   record: id => navigate('record', { app:route.name, id:Number(id) }),
-  'record-toggle': () => {
-    const { app, id } = route;
-    (recordFlags[app] ??= {})[id] = !flagFor(app,id);
-    save('records', recordFlags);
-    render();
-  },
+  'record-toggle': () => toggleRecord(route.app, route.id),
+  'list-toggle': id => toggleRecord(route.name, Number(id)),
+  'order-filter': tab => navigate(route.name, { tab }, true),
   notice: value => navigate('pin', { destination:value }),
   back, hint: () => { pinHint = !pinHint; render(); },
   digit: enterDigit,
@@ -402,7 +459,11 @@ const actions = {
   friend: id => navigate('friend', { id }),
   chat: id => { readChats.add(id); save('read', [...readChats]); navigate('chat', { id }); },
   reply: () => sendMessage(followup),
-  album: album => navigate('photos', { album }, true),
+  'photo-tab': tab => navigate('photos', { tab }, true),
+  album: album => navigate('photos', { tab:'collections', album }),
+  'note-folders': () => navigate('notes', { folders:true }),
+  'notes-list': back,
+  'call-filter': () => navigate('calls', { filter:route.filter === 'missed' ? '' : 'missed' }, true),
   photo: id => navigate('photo', { id:Number(id), album:route.album || 'all' }),
   'photo-step': id => navigate('photo', { ...route, id:Number(id) }, true),
   favorite: value => {
