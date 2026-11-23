@@ -3,17 +3,20 @@
 const screen = document.querySelector('#screen');
 const device = document.querySelector('#device');
 const homeButton = document.querySelector('#home-button');
+const statusSignals = document.querySelector('.signals');
 const apps = {
   talk:'KakaoTalk', photos:'相册', notes:'备忘录', calls:'电话', calendar:'日历',
   map:'NAVER Map', baemin:'배달의민족', coupang:'Coupang', instagram:'Instagram',
   youtube:'YouTube', naver:'NAVER', toss:'Toss', melon:'Melon', taxi:'Kakao T',
   karrot:'당근', weather:'天气', clock:'时钟', reminders:'提醒事项',
+  sms:'信息', safari:'Safari', mail:'邮件', files:'文件', calculator:'计算器', wallet:'钱包',
+  settings:'设置', camera:'相机', subway:'카카오지하철', papago:'Papago',
   folder:'韩国日常', lock:'锁定'
 };
 const folders = ['map','taxi','baemin','coupang','toss','karrot'];
 const desktopPages = [
-  ['calendar','notes','weather','reminders','instagram','youtube','naver','folder'],
-  ['taxi','baemin','coupang','toss','karrot','melon','clock','lock']
+  ['calendar','notes','weather','reminders','instagram','youtube','naver','folder','sms','camera','mail','safari','clock','wallet','files','settings'],
+  ['taxi','baemin','coupang','toss','karrot','melon','subway','papago','calculator','map','photos','lock']
 ];
 const friendGroups = ['朋友','家人','球友','同事','群聊','日常联系'];
 const phoneContacts = Object.keys(people).filter(id => !['self','club','homegroup','work'].includes(id));
@@ -70,6 +73,7 @@ const appTitle = (title, summary = '') =>
 const iconImage = id => `<img src="icons/${id}.webp" alt="" draggable="false">`;
 function appIcon(id) {
   if (id === 'folder') return `<span class="icon mini-icons" aria-hidden="true">${folders.map(iconImage).join('')}</span>`;
+  if (id === 'settings') return '<span class="icon settings-icon" aria-hidden="true">⚙</span>';
   if (id === 'lock') return '<span class="icon lock-icon" aria-hidden="true">◈</span>';
   if (id === 'calendar') return '<span class="icon calendar-icon" aria-hidden="true"><small>Tue</small><strong>24</strong></span>';
   return `<span class="icon app-art" aria-hidden="true">${iconImage(id)}</span>`;
@@ -393,6 +397,7 @@ function recordView() {
 }
 
 const renderers = {
+  ...extraRenderers,
   lock:lockView, pin:pinView, home:homeView, folder:folderView, talk:talkView, friend:friendView, chat:chatView,
   photos:galleryView, photo:photoView, notes:notesView, note:noteView, calls:callsView, call:callView,
   calendar:calendarView, event:eventView, map:mapView, place:placeView, baemin:ordersView, coupang:ordersView, order:orderView, record:recordView,
@@ -402,6 +407,10 @@ const renderers = {
 function render() {
   const version = ++renderVersion;
   device.dataset.page = route.name;
+  const phoneSettings = getSaved('phone-settings', {});
+  device.classList.toggle('dim-wall', Boolean(phoneSettings.dim));
+  device.classList.toggle('hide-battery-number', phoneSettings.battery === false);
+  statusSignals.setAttribute('aria-label', phoneSettings.battery === false ? '蜂窝信号 3 格，5G' : '蜂窝信号 3 格，5G，电量 78%');
   device.classList.toggle('wall', ['lock','pin','home','folder'].includes(route.name));
   screen.innerHTML = renderers[route.name]();
   if (route.name === 'chat') requestAnimationFrame(() => {
@@ -444,6 +453,7 @@ function toggleRecord(app, id) {
 }
 
 const actions = {
+  ...extraActions,
   open: value => navigate(value),
   'desktop-page': page => { desktopPage = Number(page); render(); },
   'everyday-tab': tab => navigate(route.name, { tab:Number(tab) }, true),

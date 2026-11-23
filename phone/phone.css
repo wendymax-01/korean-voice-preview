@@ -337,3 +337,55 @@ button.home-widget { width: 100%; color: inherit; text-align: left; }
 .switch-control[aria-checked="true"]::after { left: 22px; }
 .check-control::before { content: ""; border: 2px solid #7183ab; width: 17px; height: 17px; border-radius: 50%; }
 .check-control[aria-checked="true"]::before { background: #4566a2; border-color: #4566a2; box-shadow: inset 0 0 0 2px white; }
+
+.home-layout .home-widget { flex: 0 0 auto; }
+.home-layout .app-grid { flex: 1 1 auto; align-content: start; overflow-y: auto; min-height: 0; }
+.home-layout .page-dots { margin-top: 0; }
+.settings-icon { background: linear-gradient(150deg,#e9ebef,#a2a7af); color: #29313d; font-size: 36px; }
+.hide-battery-number .battery span { visibility: hidden; }
+.device.wall.dim-wall::before { filter: brightness(.56); }
+.device.wall.dim-wall:not([data-page="lock"])::before { filter: blur(20px) brightness(.56); }
+
+.pocket-row { min-height: 72px; }
+.pocket-mark { display: grid; min-width: 42px; height: 38px; place-items: center; padding: 0 4px; border-radius: 9px; background: #e7edf8; color: #355588; font-size: 10px; font-weight: 700; }
+.pocket-unread { flex: 0 0 auto; width: 6px; height: 6px; border-radius: 50%; background: #3274cc; }
+.pocket-subhead { color: var(--muted); font-size: 12px; margin: 0 17px 12px; }
+.pocket-message { padding: 12px !important; }
+.pocket-message .bubble p { margin-top: 6px; }
+.browser-bar { border-top: 1px solid var(--line); background: #f7f9ff; }
+.browser-bar .search { margin: 7px 12px; }
+.pass-list, .pass-list > :last-child { background: transparent; border: 0; }
+.pass-list { display: grid; gap: 9px; padding: 0; }
+.pass-list .pocket-row { background: linear-gradient(135deg,#354b71,#23314c); color: #fff; min-height: 118px; padding: 14px; border-radius: 17px; border: 0; }
+.pass-list .pocket-row:nth-child(2) { background: linear-gradient(135deg,#436951,#253c32); }
+.pass-list .pocket-row .row-main small, .pass-list .pocket-row .chevron { color: #e9effb; }
+.device[data-page="camera"], .device[data-page="calculator"] { background: #171a21; color: #f6f8ff; --line: #373d4b; --battery-number: #171a21; }
+.device[data-page="camera"] .tabs .selected { background: #f2d57f; color: #28210f; }
+.device[data-page="camera"] .tabs button { color: #e1e7f3; }
+.device[data-page="camera"] .tabs .selected { color: #28210f; }
+.viewfinder { height: 100%; min-height: 150px; display: grid; place-items: center; margin: 0 10px; }
+.viewfinder img { width: 100%; height: 100%; min-height: 0; max-height: 65dvh; object-fit: contain; }
+.camera-shot img { animation: camera-preview .25s ease-out; }
+@keyframes camera-preview { from { opacity: .35; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .camera-shot img { animation: none; } }
+.camera-controls { display: grid; grid-template-columns: 1fr 78px 1fr; align-items: center; justify-items: center; flex: 0 0 78px; }
+.camera-controls output { font-size: 11px; }
+.camera-thumb { width: 46px; height: 46px; padding: 0; }
+.camera-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 9px; }
+.shutter { width: 57px; height: 57px; border-radius: 50%; border: 3px solid #fff; background: #fff; box-shadow: inset 0 0 0 3px #171a21; }
+.calc { padding: 14px 18px 20px; max-width: 380px; margin: auto; }
+.calc output { display: block; text-align: right; min-height: 85px; padding: 12px 5px; font-size: clamp(29px, 9vw, 47px); overflow-wrap: anywhere; }
+.calc-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 7px; }
+.calc-grid button { min-height: 52px; border-radius: 19px; background: #343a47; font-size: 23px; }
+.calc-grid .calc-zero { grid-column: span 2; }
+.calc-grid .calc-op { background: #e4ae5f; color: #322208; }
+.device[data-page="files"] .pocket-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; background: transparent; border: 0; padding: 0; }
+.device[data-page="files"] .pocket-row { display: grid; align-content: start; border: 1px solid var(--line); border-radius: 14px; min-height: 112px; padding: 10px; background: #fff; }
+.device[data-page="files"] .pocket-mark { justify-self: start; }
+.device[data-page="files"] .chevron, .device[data-page="mail"] .pocket-mark, .device[data-page="sms"] .pocket-mark { display: none; }
+.device[data-page="subway"] .pocket-mark { border-radius: 18px; background: #d6eee4; color: #215641; }
+.device[data-page="subway"] .pocket-row:nth-child(2) .pocket-mark { background: #ffeccf; color: #71461e; }
+.translation-pair { display: grid; gap: 9px; padding: 13px; }
+.translation-pair article { display: grid; gap: 10px; padding: 15px; background: #fff; border: 1px solid var(--line); border-radius: 16px; }
+.translation-pair article:last-child { background: #eaf6f1; }
+.translation-pair small, .translation-pair p { color: var(--muted); font-size: 12px; }
