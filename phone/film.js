@@ -6,7 +6,9 @@ const search = document.querySelector('#search');
 const searchToggle = document.querySelector('#search-toggle');
 const announcement = document.querySelector('#announcement');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-const endingAudio = new Audio('media/voice-ending.mp3');
+const chatPause = 9000;
+let audioContext;
+let endingBuffer;
 let activeVoice = null;
 let sceneTimer;
 
@@ -70,6 +72,7 @@ function voiceMessage({ file, line }) {
     audio.currentTime = 0;
     if (activeVoice === voice) activeVoice = null;
     update();
+    scheduleEnding();
   });
   button.addEventListener('click', () => {
     if (film.dataset.scene !== 'chat') return;
@@ -109,8 +112,7 @@ for (const entry of conversation) {
   messages.append(row);
 }
 
-const openingCopy = document.querySelector('.opening-copy');
-const chatCopy = document.querySelector('.chat-copy');
+const pickup = document.querySelector('#pickup');
 const endingCopy = document.querySelector('.ending-copy');
 const ending = document.querySelector('.ending');
 const turn = document.querySelector('#turn');
@@ -119,8 +121,7 @@ const restart = document.querySelector('#restart');
 function setScene(scene) {
   clearTimeout(sceneTimer);
   film.dataset.scene = scene;
-  openingCopy.hidden = scene !== 'opening';
-  chatCopy.hidden = scene !== 'chat';
+  pickup.hidden = scene !== 'opening';
   endingCopy.hidden = !['heard', 'turning', 'ending'].includes(scene);
   ending.hidden = !['turning', 'ending'].includes(scene);
   turn.hidden = scene !== 'heard';
@@ -170,6 +171,7 @@ function openChat() {
   setScene('chat');
   scrollLatest();
   messages.focus({ preventScroll: true });
+  scheduleEnding();
 }
 
 function liftPhone() {
@@ -183,7 +185,16 @@ reachArt.addEventListener('animationend', event => {
 prop.addEventListener('animationend', event => {
   if (event.target === prop && event.animationName === 'raise-phone' && film.dataset.scene === 'lifting') openChat();
 });
-document.querySelector('#pickup').addEventListener('click', () => {
+pickup.addEventListener('click', () => {
+  // Unlock the delayed story cue during the pickup gesture on mobile browsers.
+  if (window.AudioContext) {
+    audioContext ||= new AudioContext();
+    audioContext.resume().catch(() => {});
+    endingBuffer ||= fetch('media/voice-ending.mp3')
+      .then(response => response.arrayBuffer())
+      .then(bytes => audioContext.decodeAudioData(bytes))
+      .catch(() => null);
+  }
   if (reducedMotion.matches) {
     openChat();
     return;
@@ -192,14 +203,35 @@ document.querySelector('#pickup').addEventListener('click', () => {
   sceneTimer = setTimeout(liftPhone, 700);
 });
 
-document.querySelector('#listen').addEventListener('click', () => {
-  activeVoice?.audio.pause();
+function scheduleEnding() {
+  if (film.dataset.scene !== 'chat') return;
+  clearTimeout(sceneTimer);
+  if (document.hidden) return;
+  sceneTimer = setTimeout(() => {
+    if ((activeVoice && !activeVoice.audio.paused) || !search.hidden) {
+      scheduleEnding();
+      return;
+    }
+    hearVoice();
+  }, chatPause);
+}
+
+for (const event of ['scroll', 'pointerdown', 'pointerup', 'keydown', 'focusin']) {
+  prop.addEventListener(event, scheduleEnding, { capture: true, passive: true });
+}
+document.addEventListener('visibilitychange', scheduleEnding);
+
+async function hearVoice() {
   closeSearch();
   setScene('heard');
-  endingAudio.currentTime = 0;
-  endingAudio.play().catch(() => { announcement.textContent = '身后传来了声音，请看字幕。'; });
   turn.focus({ preventScroll: true });
-});
+  const buffer = await endingBuffer;
+  if (!buffer || !['heard', 'turning'].includes(film.dataset.scene)) return;
+  const cue = audioContext.createBufferSource();
+  cue.buffer = buffer;
+  cue.connect(audioContext.destination);
+  cue.start();
+}
 
 turn.addEventListener('click', () => {
   setScene('turning');
@@ -210,12 +242,10 @@ turn.addEventListener('click', () => {
 });
 
 restart.addEventListener('click', () => {
-  endingAudio.pause();
-  endingAudio.currentTime = 0;
   activeVoice = null;
   setScene('opening');
   scrollLatest();
-  document.querySelector('#pickup').focus({ preventScroll: true });
+  pickup.focus({ preventScroll: true });
 });
 
 setScene('opening');

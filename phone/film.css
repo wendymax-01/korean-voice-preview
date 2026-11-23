@@ -35,6 +35,7 @@ h1 { font-family: "Songti SC", "Noto Serif CJK SC", Georgia, serif; margin: .35e
   background: #9c918c; border: .42cqw solid #554d4c; border-radius: 8.2cqw; padding: 1cqw;
   box-shadow: .45cqw .65cqw 0 #61565588, inset 0 0 0 .35cqw #d2c7bc; overflow: hidden;
 }
+.pickup-target { position: absolute; inset: 0; z-index: 3; border: 0; border-radius: 8.2cqw; background: transparent; -webkit-tap-highlight-color: transparent; }
 .reach-art, .held-art { position: absolute; pointer-events: none; opacity: 0; }
 .reach-art { z-index: 2; width: 52%; left: -2%; top: 51%; }
 .held-art { z-index: 2; display: block; max-width: none; left: -44.917%; top: -12.365%; width: 189.279%; height: 138.628%; }
@@ -104,9 +105,7 @@ h1 { font-family: "Songti SC", "Noto Serif CJK SC", Georgia, serif; margin: .35e
 .composer span:nth-child(2) { color: #555b63; background: #e0d9d8; border-radius: 5cqw; padding: 1.3cqw 2.4cqw; font-size: 3cqw; }
 .home-line { position: relative; flex: none; height: 4cqw; background: #ece6e3; }
 .home-line::after { content: ""; position: absolute; top: .8cqw; left: 34%; width: 32%; height: .9cqw; border-radius: 9cqw; background: #24252b; }
-.opening-copy,.chat-copy,.ending-copy { position: absolute; z-index: 3; bottom: 3.7%; left: 6%; right: 6%; text-align: center; }
-.opening-copy p,.chat-copy p { margin: 0 0 1.5cqw; color: #30292d; text-shadow: 0 1px 3px #e7dfd6; font-size: 3.3cqw; }
-.opening-copy p { margin-bottom: 3cqw; font-size: 4cqw; }
+.ending-copy { position: absolute; z-index: 3; bottom: 3.7%; left: 6%; right: 6%; text-align: center; }
 .action { border: 1px solid #e1c49a67; padding: 2.5cqw 4.4cqw; min-height: 44px; border-radius: 10cqw; background: #4d4347ed; color: #fff6ed; font-size: clamp(13px,3.35cqw,18px); }
 .action span { margin-left: 1.6cqw; color: #e7bf87; }
 .ending { position: absolute; z-index: 2; inset: 0; pointer-events: none; }
@@ -130,4 +129,3 @@ h1 { font-family: "Songti SC", "Noto Serif CJK SC", Georgia, serif; margin: .35e
 .reach-art { mask-image: linear-gradient(to bottom, black 80%, transparent 100%); }
 .messages { scrollbar-width: none; }
 .messages::-webkit-scrollbar { display: none; }
-.chat-copy { bottom: 2.5%; }
