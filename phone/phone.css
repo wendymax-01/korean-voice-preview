@@ -200,3 +200,43 @@ h1, h2, p, figure { margin: 0; }
 @media (max-width: 549px) {
   .device { height: var(--keyboard-height, 100dvh); }
 }
+
+.notice-icon { overflow: hidden; }
+.notice-icon img, .app-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.icon { overflow: hidden; border-radius: 24%; border: 0; }
+.icon.app-art { background: #fff; }
+.icon.mini-icons {
+  display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); grid-auto-rows: 1fr;
+  gap: 3px; align-content: center; padding: 7px; background: #cddfd746; border: 1px solid #fff5;
+}
+.mini-icons img { width: 100%; aspect-ratio: 1; border-radius: 23%; object-fit: cover; }
+.icon.lock-icon { background: #b7bdcd; }
+.icon.calendar-icon {
+  display: flex; flex-direction: column; justify-content: center;
+  background: linear-gradient(#fff, #f6f6f6); color: #151515; line-height: 1; gap: 2px;
+}
+.calendar-icon small { font-size: 10px; font-weight: 650; color: #e83c38; }
+.calendar-icon strong { font-size: clamp(22px,6vw,30px); font-weight: 550; }
+.home-layout { touch-action: pan-y; }
+button.home-widget { width: 100%; color: inherit; text-align: left; }
+.home-widget small { display: block; font-size: 11px; letter-spacing: .12em; color: #e0ede2; }
+.widget-calendar { font-size: 37px !important; color: #d7e9cc; font-variant-numeric: tabular-nums; }
+.app-label { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.page-dots { display: flex; justify-content: center; margin-top: auto; flex: 0 0 auto; }
+.page-dots button { min-width: 36px; min-height: 36px; display: grid; place-items: center; }
+.page-dots button span:first-child { width: 6px; height: 6px; border-radius: 50%; background: #fff7; }
+.page-dots .current span:first-child { background: #fff; }
+.dock { flex: 0 0 auto; margin-top: 0; align-items: center; }
+.folder-grid { grid-template-columns: repeat(3,1fr); }
+.friend-group h2 { margin-top: 11px; padding: 7px 3px; color: var(--muted); font-size: 12px; border-bottom: 1px solid var(--line); }
+.friend-group h2 small { margin-left: 4px; }
+.row-thumb { width: 51px; height: 51px; flex: 0 0 auto; }
+.row-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+.record-detail { white-space: pre-line; }
+.record-photo { display: block; padding: 0; margin-top: 12px; }
+.record-photo img { display: block; max-width: 100%; max-height: 55dvh; border-radius: 12px; object-fit: contain; }
+@media (max-height: 570px) {
+  .home-widget { flex-shrink: 0; }
+  .home-layout .app-grid { padding: 13px 0 7px; gap: 11px 4px; }
+  .page-dots button { min-height: 29px; }
+}
