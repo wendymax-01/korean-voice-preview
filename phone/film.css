@@ -14,31 +14,31 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid #e3bd73; out
 .pavement {
   position: absolute; inset: 0;
   background: linear-gradient(180deg, #24232930, transparent 36%, transparent 70%, #28252c36),
-    url("media/night-bench.webp") center / cover, #5b554e;
-  transform: scale(1.05);
-}
-@keyframes look-down {
-  from { transform: translateY(2%) scale(1.10); }
-  to { transform: scale(1.05); }
+    url("media/pavement.webp") 50% 66% / cover, #5b554e;
+  transform: scale(1.2);
 }
 .title { position: absolute; z-index: 2; top: 8%; left: 9%; color: #f1e3cc; text-shadow: 0 1px 6px #1f1e21; transition: opacity 350ms; }
 .title span { color: #e2caa3; font-size: 3.2cqw; letter-spacing: .12em; }
 h1 { font-family: "Songti SC", "Noto Serif CJK SC", Georgia, serif; margin: .35em 0; font-size: 7.2cqw; font-weight: 600; letter-spacing: .035em; }
 .outside-phone { position: absolute; inset: 0; z-index: 0; border: 0; background: transparent; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 .prop {
-  --on-bench: translate(9%, 12%) rotate(57deg) scale(.205, .19);
+  --on-ground: translate(4%, 12%) rotate(-17deg) scale(.32, .255);
   --reading: translate(0, 1%) rotate(-3deg) scale(.81);
   position: absolute; z-index: 1; width: 70%; left: 15%; top: 4.2%;
-  aspect-ratio: 71.9 / 150; transform: var(--on-bench);
+  aspect-ratio: 71.9 / 150; transform: var(--on-ground);
 }
 .phone {
   position: absolute; inset: 0; z-index: 1;
   background: #9c918c; border: .42cqw solid #554d4c; border-radius: 8.2cqw; padding: 1cqw;
   box-shadow: .45cqw .65cqw 0 #61565588, inset 0 0 0 .35cqw #d2c7bc; overflow: hidden;
 }
+.film:is([data-scene="opening"], [data-scene="reaching"]) .phone {
+  box-shadow: 0 1.2cqw 1.6cqw .35cqw #120f13b8, inset 0 0 0 .35cqw #d2c7bc;
+}
+.film:is([data-scene="opening"], [data-scene="reaching"]) .lcd { filter: brightness(.88); }
 .pickup-target { position: absolute; inset: 0; z-index: 3; border: 0; border-radius: 8.2cqw; background: transparent; -webkit-tap-highlight-color: transparent; }
 .reach-art, .held-art { position: absolute; pointer-events: none; opacity: 0; }
-.reach-art { filter: sepia(.13) brightness(.92); z-index: 2; width: 39%; left: 12%; top: 53%; }
+.reach-art { filter: sepia(.13) brightness(.92); z-index: 2; width: 47%; left: 2%; top: 48%; }
 .held-art { filter: sepia(.13) brightness(.92); z-index: 2; display: block; max-width: none; left: -44.917%; top: -12.365%; width: 189.279%; height: 138.628%; }
 .film[data-scene="reaching"] .reach-art { animation: reach 620ms cubic-bezier(.16,.65,.35,1) both; }
 .film[data-scene="lifting"] .reach-art { animation: release-reach 160ms linear both; }
@@ -58,7 +58,7 @@ h1 { font-family: "Songti SC", "Noto Serif CJK SC", Georgia, serif; margin: .35e
   transform: var(--reading); transition: transform 820ms cubic-bezier(.23,.62,.25,1), opacity 500ms ease;
 }
 @keyframes raise-phone {
-  from { transform: var(--on-bench); }
+  from { transform: var(--on-ground); }
   to { transform: var(--reading); }
 }
 @keyframes reveal-grip { from { opacity: 0; } to { opacity: 1; } }

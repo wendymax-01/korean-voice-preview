@@ -9,8 +9,8 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 let audioContext;
 let endingBuffer;
 let tapBuffer;
-// Cherry MX Red recording by handygaber (CC0): https://freesound.org/s/499773/
-const tapBytes = fetch('media/key-soft.wav').then(response => response.ok ? response.arrayBuffer() : null).catch(() => null);
+// iPhone-style keypress by jordanielmills (CC0): https://freesound.org/s/640365/
+const tapBytes = fetch('media/phone-key.wav').then(response => response.ok ? response.arrayBuffer() : null).catch(() => null);
 let activeVoice = null;
 let sceneTimer;
 
@@ -237,14 +237,14 @@ messages.addEventListener('touchend', () => { scrollStart = null; }, { passive: 
 messages.addEventListener('touchcancel', () => { scrollStart = null; }, { passive: true });
 messages.addEventListener('scroll', () => {
   if (film.dataset.scene === 'chat' && scrollStart !== null && scrollStart - messages.scrollTop >= 24) {
-    playTap(.38);
+    playTap(.30);
     scrollStart = null;
   }
 }, { passive: true });
 messages.addEventListener('wheel', event => {
   const now = performance.now();
   if (film.dataset.scene === 'chat' && event.deltaY < 0 && messages.scrollTop > 0 && now > wheelEnd) {
-    playTap(.38);
+    playTap(.30);
   }
   wheelEnd = now + 200;
 }, { passive: true });
