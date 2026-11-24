@@ -211,14 +211,20 @@ function playTap(volume = 1) {
   if (audioContext?.state !== 'running') return;
   if (!tapBuffer) {
     const rate = audioContext.sampleRate;
-    tapBuffer = audioContext.createBuffer(1, Math.ceil(rate * .016), rate);
+    const duration = .1;
+    tapBuffer = audioContext.createBuffer(1, Math.ceil(rate * duration), rate);
     const samples = tapBuffer.getChannelData(0);
-    let smoothed = 0;
+    const pitch = 196;
     for (let index = 0; index < samples.length; index++) {
-      smoothed = .46 * smoothed + .54 * (Math.random() * 2 - 1);
       const time = index / rate;
-      const envelope = Math.min(1, time / .0014) * Math.exp(-time / .0028);
-      samples[index] = smoothed * envelope * .16;
+      const phase = 2 * Math.PI * pitch * time;
+      const attack = Math.sin(Math.PI / 2 * Math.min(time / .006, 1)) ** 2;
+      const fade = Math.min((duration - time) / .018, 1);
+      // Higher modes decay first, leaving a short, damped pluck.
+      const body = Math.sin(phase) * Math.exp(-time / .022);
+      const overtone = .21 * Math.sin(phase * 2.01) * Math.exp(-time / .011);
+      const texture = .07 * Math.sin(phase * 3.03) * Math.exp(-time / .007);
+      samples[index] = .14 * attack * fade * (body + overtone + texture);
     }
   }
   const sound = audioContext.createBufferSource();
@@ -245,14 +251,14 @@ messages.addEventListener('touchend', () => { scrollStart = null; }, { passive: 
 messages.addEventListener('touchcancel', () => { scrollStart = null; }, { passive: true });
 messages.addEventListener('scroll', () => {
   if (film.dataset.scene === 'chat' && scrollStart !== null && scrollStart - messages.scrollTop >= 24) {
-    playTap(.25);
+    playTap(.38);
     scrollStart = null;
   }
 }, { passive: true });
 messages.addEventListener('wheel', event => {
   const now = performance.now();
   if (film.dataset.scene === 'chat' && event.deltaY < 0 && messages.scrollTop > 0 && now > wheelEnd) {
-    playTap(.25);
+    playTap(.38);
   }
   wheelEnd = now + 200;
 }, { passive: true });
