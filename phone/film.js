@@ -8,6 +8,9 @@ const announcement = document.querySelector('#announcement');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 let audioContext;
 let endingBuffer;
+let tapBuffer;
+// Cherry MX Red recording by handygaber (CC0): https://freesound.org/s/499773/
+const tapBytes = fetch('media/key-soft.wav').then(response => response.ok ? response.arrayBuffer() : null).catch(() => null);
 let activeVoice = null;
 let sceneTimer;
 
@@ -189,6 +192,7 @@ pickup.addEventListener('click', () => {
   if (window.AudioContext) {
     audioContext ||= new AudioContext();
     audioContext.resume().catch(() => {});
+    tapBuffer ||= tapBytes.then(bytes => bytes && audioContext.decodeAudioData(bytes)).catch(() => null);
     endingBuffer ||= fetch('media/voice-ending.mp3')
       .then(response => response.arrayBuffer())
       .then(bytes => audioContext.decodeAudioData(bytes))
@@ -203,33 +207,15 @@ pickup.addEventListener('click', () => {
 });
 
 let outsideTap = null;
-let tapBuffer;
 let scrollStart = null;
 let wheelEnd = 0;
 
-function playTap(volume = 1) {
-  if (audioContext?.state !== 'running') return;
-  if (!tapBuffer) {
-    const rate = audioContext.sampleRate;
-    const duration = .1;
-    tapBuffer = audioContext.createBuffer(1, Math.ceil(rate * duration), rate);
-    const samples = tapBuffer.getChannelData(0);
-    const pitch = 196;
-    for (let index = 0; index < samples.length; index++) {
-      const time = index / rate;
-      const phase = 2 * Math.PI * pitch * time;
-      const attack = Math.sin(Math.PI / 2 * Math.min(time / .006, 1)) ** 2;
-      const fade = Math.min((duration - time) / .018, 1);
-      // Higher modes decay first, leaving a short, damped pluck.
-      const body = Math.sin(phase) * Math.exp(-time / .022);
-      const overtone = .21 * Math.sin(phase * 2.01) * Math.exp(-time / .011);
-      const texture = .07 * Math.sin(phase * 3.03) * Math.exp(-time / .007);
-      samples[index] = .14 * attack * fade * (body + overtone + texture);
-    }
-  }
+async function playTap(volume = 1) {
+  const buffer = await tapBuffer;
+  if (!buffer || audioContext?.state !== 'running') return;
   const sound = audioContext.createBufferSource();
   const gain = audioContext.createGain();
-  sound.buffer = tapBuffer;
+  sound.buffer = buffer;
   gain.gain.value = volume;
   sound.connect(gain).connect(audioContext.destination);
   sound.start();

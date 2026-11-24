@@ -27,7 +27,7 @@ h1 { font-family: "Songti SC", "Noto Serif CJK SC", Georgia, serif; margin: .35e
 .outside-phone { position: absolute; inset: 0; z-index: 0; border: 0; background: transparent; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 .prop {
   --on-bench: translate(9%, 12%) rotate(57deg) scale(.205, .19);
-  --reading: translate(0, 0) rotate(-3deg) scale(1);
+  --reading: translate(0, 1%) rotate(-3deg) scale(.81);
   position: absolute; z-index: 1; width: 70%; left: 15%; top: 4.2%;
   aspect-ratio: 71.9 / 150; transform: var(--on-bench);
 }
@@ -64,7 +64,7 @@ h1 { font-family: "Songti SC", "Noto Serif CJK SC", Georgia, serif; margin: .35e
 @keyframes reveal-grip { from { opacity: 0; } to { opacity: 1; } }
 .film:is([data-scene="lifting"],[data-scene="chat"],[data-scene="heard"]) .street { transform: translateY(3%) scale(1.12); }
 .film:not([data-scene="opening"]) .title { opacity: 0; pointer-events: none; }
-.film[data-scene="heard"] .prop { transform: translateY(7%) rotate(-6deg) scale(.91); }
+.film[data-scene="heard"] .prop { transform: translateY(7%) rotate(-6deg) scale(.76); }
 .film:is([data-scene="turning"],[data-scene="ending"]) .prop { opacity: 0; transform: translate(28%, 55%) rotate(-15deg) scale(.78); pointer-events: none; }
 .film:is([data-scene="turning"],[data-scene="ending"]) .street { transform: translate(-25%, 23%) scale(1.38); opacity: .3; }
 .lcd { height: 100%; display: flex; flex-direction: column; overflow: hidden; border-radius: 6.8cqw; background: linear-gradient(155deg, #c9c7c7, #d5cec3 68%, #c7c3c0); color: #393336; font-size: 3.5cqw; }
